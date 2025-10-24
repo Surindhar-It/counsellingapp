@@ -9,15 +9,10 @@ export async function GET(request: NextRequest) {
     const origin = new URL(request.url).origin
     const baseUrl = process.env.NEXTAUTH_URL || origin
 
-    console.log("[v0] Environment check:")
-    console.log("[v0] NODE_ENV:", process.env.NODE_ENV)
-    console.log("[v0] GOOGLE_CLIENT_ID exists:", !!process.env.GOOGLE_CLIENT_ID)
-    console.log("[v0] GOOGLE_CLIENT_SECRET exists:", !!process.env.GOOGLE_CLIENT_SECRET)
-
     const clientId = process.env.GOOGLE_CLIENT_ID
 
     if (!clientId) {
-      const message = "[v0] Google OAuth not configured: missing GOOGLE_CLIENT_ID"
+      const message = "Google OAuth not configured: missing GOOGLE_CLIENT_ID"
       if (process.env.NODE_ENV !== "production") {
         console.warn(message)
         return NextResponse.json({
@@ -39,8 +34,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log("[v0] Google OAuth initiated for role:", role, "redirect:", redirect)
-
     const googleOAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth")
     googleOAuthUrl.searchParams.set("client_id", clientId)
     googleOAuthUrl.searchParams.set("redirect_uri", `${baseUrl}/api/auth/google/callback`)
@@ -48,11 +41,9 @@ export async function GET(request: NextRequest) {
     googleOAuthUrl.searchParams.set("scope", "openid email profile")
     googleOAuthUrl.searchParams.set("state", JSON.stringify({ role, redirect }))
 
-    console.log("[v0] Redirecting to Google OAuth URL:", googleOAuthUrl.toString())
-
     return NextResponse.redirect(googleOAuthUrl.toString())
   } catch (error) {
-    console.error("[v0] Google OAuth error:", error)
+    console.error("Google OAuth error:", error)
     return NextResponse.json(
       {
         error: "Google OAuth failed",

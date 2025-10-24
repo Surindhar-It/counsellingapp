@@ -6,22 +6,19 @@ export async function GET(request: NextRequest) {
   const state = searchParams.get("state")
   const error = searchParams.get("error")
 
-  console.log("[v0] OAuth callback received - code:", !!code, "state:", !!state, "error:", error)
-
   if (error) {
-    console.error("[v0] OAuth error from Google:", error)
+    console.error("OAuth error from Google:", error)
     return NextResponse.redirect(new URL(`/auth/login?error=${encodeURIComponent(error)}`, request.url))
   }
 
   if (!code || !state) {
-    console.error("[v0] Missing OAuth parameters - code:", !!code, "state:", !!state)
+    console.error("Missing OAuth parameters")
     return NextResponse.redirect(new URL("/auth/login?error=missing_parameters", request.url))
   }
 
   try {
     const stateData = JSON.parse(decodeURIComponent(state))
     const { role, redirect } = stateData
-    console.log("[v0] Parsed state data - role:", role, "redirect:", redirect)
 
     const clientId = process.env.GOOGLE_CLIENT_ID
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET
@@ -29,7 +26,7 @@ export async function GET(request: NextRequest) {
     const baseUrl = process.env.NEXTAUTH_URL || origin
 
     if (!clientId || !clientSecret) {
-      const msg = "[v0] Google OAuth not configured: missing GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET"
+      const msg = "Google OAuth not configured: missing GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET"
       if (process.env.NODE_ENV !== "production") {
         console.warn(msg)
         return NextResponse.json(
@@ -47,7 +44,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL("/auth/login?error=oauth_config_missing", request.url))
     }
 
-    console.log("[v0] Exchanging code for token...")
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: {
@@ -64,14 +60,12 @@ export async function GET(request: NextRequest) {
 
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text()
-      console.error("[v0] Token exchange failed:", tokenResponse.status, errorText)
+      console.error("Token exchange failed:", tokenResponse.status, errorText)
       throw new Error(`Failed to exchange code for token: ${tokenResponse.status}`)
     }
 
     const tokenData = await tokenResponse.json()
-    console.log("[v0] Token exchange successful")
 
-    console.log("[v0] Fetching user info...")
     const userResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
@@ -79,12 +73,11 @@ export async function GET(request: NextRequest) {
     })
 
     if (!userResponse.ok) {
-      console.error("[v0] User info fetch failed:", userResponse.status)
+      console.error("User info fetch failed:", userResponse.status)
       throw new Error("Failed to get user info")
     }
 
     const googleUser = await userResponse.json()
-    console.log("[v0] User info retrieved for:", googleUser.email)
 
     const user = {
       id: `google_${googleUser.id}`,
@@ -109,8 +102,6 @@ export async function GET(request: NextRequest) {
               ? "/admin/dashboard"
               : "/"
 
-    console.log("[v0] Redirecting to dashboard:", dashboardUrl)
-
     const response = NextResponse.redirect(new URL(dashboardUrl, request.url))
 
     response.cookies.set("user", JSON.stringify(user), {
@@ -123,7 +114,7 @@ export async function GET(request: NextRequest) {
 
     return response
   } catch (error) {
-    console.error("[v0] Google OAuth callback error:", error)
+    console.error("Google OAuth callback error:", error)
     return NextResponse.redirect(new URL("/auth/login?error=oauth_failed", request.url))
   }
 }
