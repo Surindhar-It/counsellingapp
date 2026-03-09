@@ -9,8 +9,15 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://typescriptlang.org)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)](https://mongodb.com)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-counsellingapp.vercel.app-brightgreen?logo=vercel)](https://counsellingapp.vercel.app)
 
 </div>
+
+---
+
+## 🌐 Live Demo
+
+**➜ [https://counsellingapp.vercel.app](https://counsellingapp.vercel.app)**
 
 ---
 
