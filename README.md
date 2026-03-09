@@ -1,30 +1,138 @@
-# counsellingappnew
+<div align="center">
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+# 🧠 MindBridge
+### Virtual Counselling Platform
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/yeswanthkumarit23-3859s-projects/v0-counsellingappnew)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/hcwCkQkwytz)
+*AI-powered mental health support for students, parents, and counsellors*
 
-## Overview
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://typescriptlang.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)](https://mongodb.com)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+</div>
 
-## Deployment
+---
 
-Your project is live at:
+## ✨ Features
 
-**[https://v0-counsellingappnew-27-d7rouv6kv.vercel.app/](https://v0-counsellingappnew-27-d7rouv6kv.vercel.app/)**
+- **Multi-role Authentication** — Student, Parent, Counsellor, and Admin portals
+- **AI Chat Assistant** — 24/7 mental health support powered by Groq (Llama 3.3)
+- **Video Sessions** — Live video counselling with emotion analysis for counsellors
+- **Appointment Booking** — Schedule sessions between students and counsellors
+- **Secure Messaging** — Direct communication with priority levels
+- **Admin Dashboard** — System-wide stats, user management, and alerts
+- **Google OAuth** — Sign in with Google across all roles
+- **MongoDB Atlas** — Full persistence for users, appointments, messages, and sessions
 
-## Build your app
+---
 
-Continue building your app on:
+## 🛠 Tech Stack
 
-**[https://v0.app/chat/projects/hcwCkQkwytz](https://v0.app/chat/projects/hcwCkQkwytz)**
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Database | MongoDB Atlas + Mongoose |
+| Styling | Tailwind CSS v4 |
+| UI Components | shadcn/ui + Radix UI |
+| AI | Groq API (Llama 3.3 70B) |
+| Auth | Custom JWT + Google OAuth |
+| Deployment | Vercel |
 
-## How It Works
+---
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+## 🚀 Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Surindhar-It/counsellingapp.git
+cd counsellingapp
+pnpm install
+```
+
+### 2. Set up environment variables
+
+Create a `.env.local` file in the project root:
+
+```env
+# MongoDB Atlas
+MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/mindbridge?retryWrites=true&w=majority
+
+# App
+NEXTAUTH_URL=http://localhost:3000
+
+# Google OAuth (optional)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Groq AI — https://console.groq.com/keys
+GROQ_API_KEY=your_groq_api_key
+```
+
+### 3. Seed demo users
+
+```bash
+pnpm run seed
+```
+
+### 4. Run the dev server
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 👥 Demo Accounts
+
+| Role | Email | Password |
+|---|---|---|
+| Student | `student@example.com` | `password` |
+| Parent | `parent@example.com` | `password` |
+| Counsellor | `counsellor@example.com` | `password` |
+| Admin | `admin@mindbridge.com` | `Admin@123` |
+
+---
+
+## 📁 Project Structure
+
+```
+counsellingapp/
+├── app/
+│   ├── api/               # API routes (auth, appointments, messages, sessions, chat)
+│   ├── auth/              # Login & register pages
+│   ├── student/           # Student dashboard
+│   ├── parent/            # Parent dashboard
+│   ├── counsellor/        # Counsellor dashboard
+│   ├── admin/             # Admin dashboard
+│   └── session/[id]/      # Video session page
+├── lib/
+│   ├── mongodb.ts         # Connection singleton
+│   ├── models/            # Mongoose models (User, Appointment, Message, Session)
+│   ├── auth.ts            # Auth utilities
+│   └── auth-context.tsx   # React auth context
+├── components/            # Shared UI components
+└── scripts/
+    └── seed.ts            # Database seeder
+```
+
+---
+
+## 🌐 Deployment
+
+This app is deployed on **Vercel**. To deploy your own instance:
+
+1. Push to GitHub
+2. Import the repo at [vercel.com/new](https://vercel.com/new)
+3. Add all environment variables from `.env.local` in the Vercel dashboard
+4. Deploy ✅
+
+---
+
+## 📄 License
+
+MIT © [Surindhar](https://github.com/Surindhar-It)

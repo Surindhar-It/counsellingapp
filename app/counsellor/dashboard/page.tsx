@@ -65,7 +65,7 @@ const recentStudents = [
 
 export default function CounsellorDashboard() {
   const [startingSession, setStartingSession] = useState<string | null>(null)
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
   const handleLogout = () => {
     logout()
     window.location.href = "/auth/login"
@@ -117,7 +117,7 @@ export default function CounsellorDashboard() {
             <Button variant="ghost" size="sm">
               <Bell className="h-4 w-4" />
             </Button>
-            <Badge variant="secondary">Dr. Sarah Smith</Badge>
+            <Badge variant="secondary">{user ? `${user.firstName} ${user.lastName}` : "Counsellor"}</Badge>
             <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
             </Button>
@@ -128,7 +128,7 @@ export default function CounsellorDashboard() {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Good morning, Dr. Smith!</h2>
+          <h2 className="text-3xl font-bold mb-2">Good morning, {user?.firstName ?? "Counsellor"}!</h2>
           <p className="text-muted-foreground">You have 3 appointments scheduled for today.</p>
         </div>
 

@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +18,8 @@ import {
   Clock,
 } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
 
 const systemStats = {
   totalUsers: 1247,
@@ -92,6 +96,14 @@ const systemHealth = [
 ]
 
 export default function AdminDashboard() {
+  const { user, logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    logout()
+    router.push("/auth/login")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Header */}
@@ -105,8 +117,8 @@ export default function AdminDashboard() {
             <Button variant="ghost" size="sm">
               <Settings className="h-4 w-4" />
             </Button>
-            <Badge variant="secondary">Administrator</Badge>
-            <Button variant="outline" size="sm">
+            <Badge variant="secondary">{user ? `${user.firstName} ${user.lastName}` : "Administrator"}</Badge>
+            <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
             </Button>
           </div>

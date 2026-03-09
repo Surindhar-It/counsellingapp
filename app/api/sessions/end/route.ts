@@ -1,36 +1,38 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { connectDB } from "@/lib/mongodb"
+import Session from "@/lib/models/Session"
 
 export async function POST(request: NextRequest) {
   try {
     const { sessionId, duration, notes, emotionData, endTime } = await request.json()
 
-    // In a real app, this would save to a database
-    const sessionRecord = {
-      id: sessionId,
-      duration,
-      notes,
-      emotionData,
-      endTime: new Date(endTime),
-      status: "completed",
-      createdAt: new Date(),
+    if (!sessionId) {
+      return NextResponse.json({ error: "sessionId is required" }, { status: 400 })
     }
 
-    console.log("Session ended:", sessionRecord)
+    await connectDB()
 
-    // Here you would typically:
-    // 1. Save session data to database
-    // 2. Generate session summary
-    // 3. Update student progress
-    // 4. Send notifications to parents if needed
-    // 5. Create follow-up tasks
+    const updatedSession = await Session.findOneAndUpdate(
+      { sessionId },
+      {
+        $set: {
+          duration: duration || 0,
+          notes: notes || "",
+          emotionData: emotionData || [],
+          endTime: endTime ? new Date(endTime) : new Date(),
+          status: "completed",
+        },
+      },
+      { new: true, upsert: true }
+    )
 
     return NextResponse.json({
       message: "Session ended successfully",
-      sessionId: sessionId,
+      sessionId,
       summary: {
-        duration: `${Math.floor(duration / 60)} minutes`,
-        emotionsDetected: emotionData.length,
-        notesLength: notes.length,
+        duration: `${Math.floor((duration || 0) / 60)} minutes`,
+        emotionsDetected: (emotionData || []).length,
+        notesLength: (notes || "").length,
       },
     })
   } catch (error) {

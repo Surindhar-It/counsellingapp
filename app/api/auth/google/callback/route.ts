@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { connectDB } from "@/lib/mongodb"
+import User from "@/lib/models/User"
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -79,15 +81,33 @@ export async function GET(request: NextRequest) {
 
     const googleUser = await userResponse.json()
 
+    // Upsert user into MongoDB
+    await connectDB()
+    const firstName = googleUser.given_name || googleUser.name?.split(" ")[0] || "User"
+    const lastName = googleUser.family_name || googleUser.name?.split(" ").slice(1).join(" ") || ""
+
+    const dbUser = await User.findOneAndUpdate(
+      { email: googleUser.email.toLowerCase() },
+      {
+        $setOnInsert: {
+          email: googleUser.email.toLowerCase(),
+          firstName,
+          lastName,
+          role,
+          isActive: true,
+          googleId: googleUser.id,
+        },
+      },
+      { upsert: true, new: true }
+    )
+
     const user = {
-      id: `google_${googleUser.id}`,
-      email: googleUser.email,
-      firstName: googleUser.given_name || googleUser.name?.split(" ")[0] || "User",
-      lastName: googleUser.family_name || googleUser.name?.split(" ").slice(1).join(" ") || "",
-      role: role,
-      provider: "google",
-      avatar: googleUser.picture,
-      createdAt: new Date().toISOString(),
+      id: dbUser._id.toString(),
+      email: dbUser.email,
+      firstName: dbUser.firstName,
+      lastName: dbUser.lastName,
+      role: dbUser.role,
+      isActive: dbUser.isActive,
     }
 
     // Redirect based on role
@@ -105,10 +125,10 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.redirect(new URL(dashboardUrl, request.url))
 
     response.cookies.set("user", JSON.stringify(user), {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     })
 

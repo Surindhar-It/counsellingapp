@@ -10,7 +10,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 
 export default function StudentDashboard() {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
   const router = useRouter()
 
   const handleLogout = () => {
@@ -39,7 +39,7 @@ export default function StudentDashboard() {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Welcome back, Alex!</h2>
+          <h2 className="text-3xl font-bold mb-2">Welcome back, {user?.firstName ?? "Student"}!</h2>
           <p className="text-muted-foreground">How are you feeling today? I'm here to support you.</p>
         </div>
 

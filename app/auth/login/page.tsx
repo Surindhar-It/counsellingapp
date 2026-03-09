@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Icons } from "@/components/icons"
 import Link from "next/link"
+import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
+  const { login } = useAuth()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,8 +44,8 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (response.ok) {
-        // Store user data in localStorage for session management
-        localStorage.setItem("user", JSON.stringify(data.user))
+        // Update auth context AND localStorage
+        login(data.user)
 
         // Redirect based on user role
         switch (data.user.role) {

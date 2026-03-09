@@ -1,9 +1,13 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Heart, User, Calendar, TrendingUp, MessageCircle, FileText, Phone, Shield, Clock } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
 
 const childData = {
   name: "Alex Johnson",
@@ -82,6 +86,14 @@ const upcomingEvents = [
 ]
 
 export default function ParentDashboard() {
+  const { user, logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    logout()
+    router.push("/auth/login")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Header */}
@@ -92,8 +104,8 @@ export default function ParentDashboard() {
             <h1 className="text-2xl font-bold text-primary">MindBridge</h1>
           </div>
           <div className="flex items-center space-x-4">
-            <Badge variant="secondary">Parent - Jane Johnson</Badge>
-            <Button variant="outline" size="sm">
+            <Badge variant="secondary">Parent{user ? ` - ${user.firstName} ${user.lastName}` : ""}</Badge>
+            <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
             </Button>
           </div>
@@ -103,7 +115,7 @@ export default function ParentDashboard() {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Welcome back, Jane!</h2>
+          <h2 className="text-3xl font-bold mb-2">Welcome back, {user?.firstName ?? "Parent"}!</h2>
           <p className="text-muted-foreground">
             Here's how {childData.name} is progressing in their mental health journey.
           </p>

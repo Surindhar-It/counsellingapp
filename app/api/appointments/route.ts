@@ -1,30 +1,25 @@
 import { type NextRequest, NextResponse } from "next/server"
-
-// Mock database - in a real app, this would be a proper database
-const appointments: any[] = []
+import { connectDB } from "@/lib/mongodb"
+import Appointment from "@/lib/models/Appointment"
 
 export async function POST(request: NextRequest) {
   try {
     const { counsellorId, date, time, notes, studentId } = await request.json()
 
-    // Validate required fields
     if (!counsellorId || !date || !time || !studentId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // Create new appointment
-    const newAppointment = {
-      id: Date.now().toString(),
+    await connectDB()
+
+    const newAppointment = await Appointment.create({
       counsellorId,
       studentId,
       date: new Date(date),
       time,
       notes: notes || "",
       status: "pending",
-      createdAt: new Date(),
-    }
-
-    appointments.push(newAppointment)
+    })
 
     return NextResponse.json({
       message: "Appointment booked successfully",
@@ -40,15 +35,20 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const studentId = searchParams.get("studentId")
+    const counsellorId = searchParams.get("counsellorId")
 
-    if (!studentId) {
-      return NextResponse.json({ error: "Student ID required" }, { status: 400 })
+    await connectDB()
+
+    const query: Record<string, string> = {}
+    if (studentId) query.studentId = studentId
+    if (counsellorId) query.counsellorId = counsellorId
+
+    if (!studentId && !counsellorId) {
+      return NextResponse.json({ error: "studentId or counsellorId is required" }, { status: 400 })
     }
 
-    // Filter appointments for the specific student
-    const studentAppointments = appointments.filter((appointment) => appointment.studentId === studentId)
-
-    return NextResponse.json({ appointments: studentAppointments })
+    const appointments = await Appointment.find(query).sort({ date: 1 })
+    return NextResponse.json({ appointments })
   } catch (error) {
     console.error("Get appointments error:", error)
     return NextResponse.json({ error: "Failed to fetch appointments" }, { status: 500 })

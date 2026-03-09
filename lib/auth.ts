@@ -99,14 +99,14 @@ export async function registerUser(userData: {
 export function getRedirectPath(role: UserRole): string {
   switch (role) {
     case "student":
-      return "/dashboard/student"
+      return "/student/dashboard"
     case "parent":
-      return "/dashboard/parent"
+      return "/parent/dashboard"
     case "counsellor":
-      return "/dashboard/counsellor"
+      return "/counsellor/dashboard"
     case "admin":
-      return "/dashboard/admin"
+      return "/admin/dashboard"
     default:
-      return "/dashboard"
+      return "/"
   }
 }

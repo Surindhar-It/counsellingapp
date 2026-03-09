@@ -38,7 +38,7 @@ export default function VideoSession({ params }: { params: { id: string } }) {
 
   const sessionInfo = {
     student: "Alex Johnson",
-    counsellor: user?.name || "Dr. Sarah Smith",
+    counsellor: user ? `${user.firstName} ${user.lastName}` : "Dr. Sarah Smith",
     type: "Anxiety Support Session",
     scheduledTime: "10:00 AM - 11:00 AM",
   }
