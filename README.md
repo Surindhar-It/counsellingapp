@@ -94,7 +94,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | Student | `student@example.com` | `password` |
 | Parent | `parent@example.com` | `password` |
 | Counsellor | `counsellor@example.com` | `password` |
-| Admin | `admin@mindbridge.com` | `Admin@123` |
+| Admin | Private |
 
 ---
 
